@@ -8,6 +8,7 @@ import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { CreateActivity } from "@/components/admin/CreateActivity";
 import { RewardStudent } from "@/components/admin/RewardStudent";
 import { MintCertificate } from "@/components/admin/MintCertificate";
+import { ActivityList } from "@/components/admin/ActivityList";
 
 export default function AdminPage() {
   const { account } = useWeb3();
@@ -85,15 +86,15 @@ export default function AdminPage() {
 
   return (
     <ProtectedRoute>
-      <div className="min-h-screen bg-gradient-to-br from-purple-100 via-blue-50 to-purple-50">
+      <div className="min-h-screen bg-slate-50">
         {/* Header */}
-        <header className="bg-white/80 backdrop-blur-sm shadow-sm">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-            <div className="flex items-center justify-between mb-4">
+        <header className="bg-white border-b border-gray-200">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
-                <div className="w-14 h-14 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
+                <div className="w-12 h-12 bg-[#1e3a8a] rounded-lg flex items-center justify-center">
                   <svg
-                    className="w-8 h-8 text-white"
+                    className="w-7 h-7 text-white"
                     fill="currentColor"
                     viewBox="0 0 20 20"
                   >
@@ -101,39 +102,28 @@ export default function AdminPage() {
                   </svg>
                 </div>
                 <div>
-                  <h1 className="text-2xl font-bold text-gray-900">Admin Dashboard</h1>
-                  <p className="text-sm text-gray-600">Manage activities, rewards, and certificates</p>
+                  <h1 className="text-xl font-bold text-gray-900">Admin Dashboard</h1>
+                  <p className="text-xs text-gray-600">Kelola aktivitas, reward, dan sertifikat</p>
                 </div>
               </div>
 
-              <button
-                onClick={() => router.push("/")}
-                className="bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2.5 px-5 rounded-lg transition duration-200"
-              >
-                Student View
-              </button>
-            </div>
+              <div className="flex items-center space-x-3">
+                {/* Admin Address Badge */}
+                <div className="bg-blue-50 border border-blue-200 rounded-lg px-3 py-2">
+                  <span className="text-xs text-gray-700">
+                    <span className="font-semibold">Admin:</span>{" "}
+                    <code className="text-[#1e3a8a]">
+                      {account?.substring(0, 6)}...{account?.substring(account.length - 4)}
+                    </code>
+                  </span>
+                </div>
 
-            {/* Admin Info Badge */}
-            <div className="bg-purple-100 border border-purple-200 rounded-lg p-3">
-              <div className="flex items-center space-x-2">
-                <svg
-                  className="w-4 h-4 text-purple-600"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
+                <button
+                  onClick={() => router.push("/")}
+                  className="bg-white hover:bg-gray-50 text-gray-900 font-medium py-2.5 px-5 rounded-lg transition duration-200 border-2 border-gray-300 hover:border-gray-400"
                 >
-                  <path
-                    fillRule="evenodd"
-                    d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-                <span className="text-xs text-purple-900">
-                  <span className="font-semibold">Admin Address:</span>{" "}
-                  <code className="bg-purple-200 px-2 py-0.5 rounded text-xs">
-                    {account?.substring(0, 10)}...{account?.substring(account.length - 8)}
-                  </code>
-                </span>
+                  Student View
+                </button>
               </div>
             </div>
           </div>
@@ -142,6 +132,9 @@ export default function AdminPage() {
         {/* Main Content */}
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="space-y-6">
+            {/* Activity List - Full Width */}
+            <ActivityList />
+
             {/* Create Activity - Full Width */}
             <CreateActivity />
 
@@ -157,9 +150,9 @@ export default function AdminPage() {
         </main>
 
         {/* Footer */}
-        <footer className="bg-white/80 backdrop-blur-sm border-t border-gray-200 mt-12">
+        <footer className="bg-white border-t border-gray-200 mt-12">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-            <p className="text-center text-xs text-gray-600">
+            <p className="text-center text-xs text-gray-500">
               Web3 Campus Point System - Admin Panel
             </p>
           </div>

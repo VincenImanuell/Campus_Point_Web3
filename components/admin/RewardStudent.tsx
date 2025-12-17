@@ -1,28 +1,29 @@
 "use client";
 
-import { useState } from "react";
-import { useActivityManager } from "@/hooks/useActivityManager";
+import { useState, useEffect } from "react";
+import { useActivityManager, Activity } from "@/hooks/useActivityManager";
 
 export const RewardStudent: React.FC = () => {
-  const { rewardStudent, getActivity, isLoading, error } = useActivityManager();
+  const { rewardStudent, getAllActivities, isLoading, error } = useActivityManager();
   const [activityId, setActivityId] = useState("");
   const [studentAddress, setStudentAddress] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
-  const [activityInfo, setActivityInfo] = useState<string>("");
+  const [activities, setActivities] = useState<Activity[]>([]);
+  const [loadingActivities, setLoadingActivities] = useState(false);
 
-  const handleActivityIdChange = async (id: string) => {
+  useEffect(() => {
+    const fetchActivities = async () => {
+      setLoadingActivities(true);
+      const allActivities = await getAllActivities();
+      setActivities(allActivities);
+      setLoadingActivities(false);
+    };
+
+    fetchActivities();
+  }, []);
+
+  const handleActivityIdChange = (id: string) => {
     setActivityId(id);
-    setActivityInfo("");
-
-    if (id && !isNaN(parseInt(id))) {
-      const activity = await getActivity(parseInt(id));
-      if (activity && activity.id > 0) {
-        setActivityInfo(
-          `${activity.name} - ${activity.pointReward.toString()} points ${activity.isActive ? "✓" : "(Inactive)"
-          }`
-        );
-      }
-    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -73,23 +74,34 @@ export const RewardStudent: React.FC = () => {
       </p>
 
       <form onSubmit={handleSubmit} className="space-y-4">
-        {/* Activity ID */}
+        {/* Activity Selection */}
         <div>
           <label htmlFor="activityId" className="block text-xs font-semibold text-gray-700 mb-1.5">
-            Activity ID
+            Pilih Kegiatan
           </label>
-          <input
-            id="activityId"
-            type="number"
-            value={activityId}
-            onChange={(e) => handleActivityIdChange(e.target.value)}
-            placeholder="e.g., 1"
-            min="1"
-            className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition text-sm text-gray-900"
-            required
-          />
-          {activityInfo && (
-            <p className="text-xs text-green-600 mt-1.5 font-medium">{activityInfo}</p>
+          {loadingActivities ? (
+            <div className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-500">
+              Memuat kegiatan...
+            </div>
+          ) : activities.length === 0 ? (
+            <div className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-500">
+              Belum ada kegiatan tersedia
+            </div>
+          ) : (
+            <select
+              id="activityId"
+              value={activityId}
+              onChange={(e) => handleActivityIdChange(e.target.value)}
+              className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition text-sm text-gray-900"
+              required
+            >
+              <option value="">-- Pilih Kegiatan --</option>
+              {activities.map((activity) => (
+                <option key={activity.id.toString()} value={activity.id.toString()}>
+                  ID {activity.id.toString()} - {activity.name} ({activity.pointReward.toString()} poin) {activity.isActive ? "✓" : "(Tidak Aktif)"}
+                </option>
+              ))}
+            </select>
           )}
         </div>
 

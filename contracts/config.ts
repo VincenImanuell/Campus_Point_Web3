@@ -11,7 +11,7 @@ export const CONTRACT_ADDRESSES = {
 export const SEPOLIA_NETWORK = {
   chainId: 11155111,
   chainName: "Sepolia Testnet",
-  rpcUrl: "https://sepolia.infura.io/v3/YOUR_INFURA_KEY", // Or use a public RPC
+  rpcUrl: "https://ethereum-sepolia-rpc.publicnode.com", // Public RPC
   blockExplorerUrl: "https://sepolia.etherscan.io",
   nativeCurrency: {
     name: "Sepolia Ethereum",

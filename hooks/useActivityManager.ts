@@ -167,6 +167,43 @@ export const useActivityManager = () => {
     return owner?.toLowerCase() === account.toLowerCase();
   };
 
+  // Get all activities
+  const getAllActivities = async (): Promise<Activity[]> => {
+    try {
+      if (!provider) throw new Error("Provider not available");
+      const contract = new Contract(
+        CONTRACT_ADDRESSES.ACTIVITY_MANAGER,
+        ACTIVITY_MANAGER_ABI,
+        provider
+      );
+
+      const nextId = await contract.nextActivityId();
+      const nextIdNumber = Number(nextId);
+
+      const activities: Activity[] = [];
+
+      // Fetch all activities from ID 1 to nextActivityId - 1
+      for (let i = 1; i < nextIdNumber; i++) {
+        try {
+          const result = await contract.getActivity(i);
+          activities.push({
+            id: result[0],
+            name: result[1],
+            pointReward: result[2],
+            isActive: result[3],
+          });
+        } catch (err) {
+          console.error(`Error fetching activity ${i}:`, err);
+        }
+      }
+
+      return activities;
+    } catch (err: any) {
+      console.error("Error getting all activities:", err);
+      return [];
+    }
+  };
+
   return {
     isLoading,
     error,
@@ -178,5 +215,6 @@ export const useActivityManager = () => {
     getNextActivityId,
     getOwner,
     isOwner,
+    getAllActivities,
   };
 };
