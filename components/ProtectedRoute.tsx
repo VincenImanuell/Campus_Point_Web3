@@ -13,27 +13,23 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   const router = useRouter();
 
   useEffect(() => {
-    // Wait for initial loading to complete
     if (isLoading) return;
-
-    // Redirect to login if not connected or wrong network
     if (!isConnected || !account || chainId !== 11155111) {
       router.push("/login");
     }
   }, [isConnected, account, chainId, isLoading, router]);
 
-  // Show loading state while checking authentication
   if (isLoading || !isConnected || !account || chainId !== 11155111) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-          <p className="mt-4 text-gray-600">Loading...</p>
+      <div className="min-h-screen bg-[#020617] flex flex-col items-center justify-center">
+        <div className="relative">
+          <div className="w-12 h-12 border-4 border-slate-800 rounded-full"></div>
+          <div className="w-12 h-12 border-4 border-indigo-500 rounded-full border-t-transparent animate-spin absolute top-0 left-0"></div>
         </div>
+        <p className="mt-6 text-slate-400 text-sm font-medium tracking-wide animate-pulse">AUTHENTICATING</p>
       </div>
     );
   }
 
-  // Render children if authenticated
   return <>{children}</>;
 };
