@@ -3,6 +3,7 @@ import { Contract } from "ethers";
 import { useWeb3 } from "@/contexts/Web3Context";
 import { ACTIVITY_MANAGER_ABI } from "@/contracts/ActivityManagerABI";
 import { CONTRACT_ADDRESSES } from "@/contracts/config";
+import { getReadableError } from "@/utils/web3Errors"; // Import util
 
 export interface Activity {
   id: bigint;
@@ -29,12 +30,14 @@ export const useActivityManager = () => {
     try {
       const contract = await getContract();
       const tx = await contract.createActivity(name, pointReward);
-      await tx.wait();
+      await tx.wait(); // Menunggu konfirmasi blockchain
       return true;
     } catch (err: any) {
+      const readableMsg = getReadableError(err);
       console.error("Error creating activity:", err);
-      setError(err.message || "Failed to create activity");
-      return false;
+      setError(readableMsg);
+      // Kita throw error agar bisa ditangkap oleh komponen UI untuk menampilkan Toast
+      throw new Error(readableMsg); 
     } finally {
       setIsLoading(false);
     }
@@ -45,7 +48,7 @@ export const useActivityManager = () => {
     setIsLoading(true);
     setError(null);
     try {
-      if (!provider) throw new Error("Provider not available");
+      if (!provider) throw new Error("Wallet not connected");
       const contract = new Contract(
         CONTRACT_ADDRESSES.ACTIVITY_MANAGER,
         ACTIVITY_MANAGER_ABI,
@@ -60,8 +63,9 @@ export const useActivityManager = () => {
         isActive: result[3],
       };
     } catch (err: any) {
+      const readableMsg = getReadableError(err);
       console.error("Error getting activity:", err);
-      setError(err.message || "Failed to get activity");
+      setError(readableMsg);
       return null;
     } finally {
       setIsLoading(false);
@@ -78,9 +82,10 @@ export const useActivityManager = () => {
       await tx.wait();
       return true;
     } catch (err: any) {
+      const readableMsg = getReadableError(err);
       console.error("Error rewarding student:", err);
-      setError(err.message || "Failed to reward student");
-      return false;
+      setError(readableMsg);
+      throw new Error(readableMsg);
     } finally {
       setIsLoading(false);
     }
@@ -100,9 +105,10 @@ export const useActivityManager = () => {
       await tx.wait();
       return true;
     } catch (err: any) {
+      const readableMsg = getReadableError(err);
       console.error("Error minting certificate:", err);
-      setError(err.message || "Failed to mint certificate");
-      return false;
+      setError(readableMsg);
+      throw new Error(readableMsg);
     } finally {
       setIsLoading(false);
     }
@@ -118,18 +124,18 @@ export const useActivityManager = () => {
       await tx.wait();
       return true;
     } catch (err: any) {
+      const readableMsg = getReadableError(err);
       console.error("Error setting activity status:", err);
-      setError(err.message || "Failed to set activity status");
-      return false;
+      setError(readableMsg);
+      throw new Error(readableMsg);
     } finally {
       setIsLoading(false);
     }
   };
 
-  // Get next activity ID
   const getNextActivityId = async (): Promise<number | null> => {
     try {
-      if (!provider) throw new Error("Provider not available");
+      if (!provider) return null;
       const contract = new Contract(
         CONTRACT_ADDRESSES.ACTIVITY_MANAGER,
         ACTIVITY_MANAGER_ABI,
@@ -143,10 +149,9 @@ export const useActivityManager = () => {
     }
   };
 
-  // Get contract owner
   const getOwner = async (): Promise<string | null> => {
     try {
-      if (!provider) throw new Error("Provider not available");
+      if (!provider) return null;
       const contract = new Contract(
         CONTRACT_ADDRESSES.ACTIVITY_MANAGER,
         ACTIVITY_MANAGER_ABI,
@@ -160,17 +165,15 @@ export const useActivityManager = () => {
     }
   };
 
-  // Check if current account is owner
   const isOwner = async (): Promise<boolean> => {
     if (!account) return false;
     const owner = await getOwner();
     return owner?.toLowerCase() === account.toLowerCase();
   };
 
-  // Get all activities
   const getAllActivities = async (): Promise<Activity[]> => {
     try {
-      if (!provider) throw new Error("Provider not available");
+      if (!provider) return [];
       const contract = new Contract(
         CONTRACT_ADDRESSES.ACTIVITY_MANAGER,
         ACTIVITY_MANAGER_ABI,
@@ -179,10 +182,8 @@ export const useActivityManager = () => {
 
       const nextId = await contract.nextActivityId();
       const nextIdNumber = Number(nextId);
-
       const activities: Activity[] = [];
 
-      // Fetch all activities from ID 1 to nextActivityId - 1
       for (let i = 1; i < nextIdNumber; i++) {
         try {
           const result = await contract.getActivity(i);
@@ -196,7 +197,6 @@ export const useActivityManager = () => {
           console.error(`Error fetching activity ${i}:`, err);
         }
       }
-
       return activities;
     } catch (err: any) {
       console.error("Error getting all activities:", err);
