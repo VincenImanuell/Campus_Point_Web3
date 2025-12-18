@@ -6,29 +6,26 @@ import { useWeb3 } from "@/contexts/Web3Context";
 
 export const TokenBalance: React.FC = () => {
   const { isConnected } = useWeb3();
-  const { balance, tokenName, tokenSymbol, isLoading, error, refreshBalance } = useCampusPoint();
+  const { balance, tokenSymbol, isLoading, error, refreshBalance } = useCampusPoint();
 
-  if (!isConnected) {
-    return (
-      <div className="bg-white rounded-lg border border-gray-200 p-4">
-        <p className="text-sm text-gray-600 text-center">Connect wallet untuk melihat poin</p>
-      </div>
-    );
-  }
+  if (!isConnected) return null;
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
-      <div className="flex items-center justify-between p-4">
-        <div className="flex-1">
-          <p className="text-xs text-gray-500 mb-1">Campus Points Balance</p>
+    <div className="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl relative overflow-hidden group">
+      {/* Background decoration */}
+      <div className="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-indigo-500/10 rounded-full blur-2xl group-hover:bg-indigo-500/20 transition-all"></div>
+      
+      <div className="relative z-10 flex justify-between items-start">
+        <div>
+          <p className="text-slate-400 text-xs font-semibold uppercase tracking-wider mb-2">Total Balance</p>
           {error ? (
-            <p className="text-sm text-red-600">Error loading balance</p>
+            <p className="text-sm text-red-400">Error loading data</p>
           ) : (
             <div className="flex items-baseline space-x-2">
-              <span className="text-2xl font-bold text-[#1e3a8a]">
+              <span className="text-4xl font-black text-white tracking-tight">
                 {parseFloat(balance).toFixed(2)}
               </span>
-              <span className="text-sm text-gray-600 font-medium">
+              <span className="text-lg font-bold text-indigo-400">
                 {tokenSymbol || "CPNT"}
               </span>
             </div>
@@ -38,11 +35,10 @@ export const TokenBalance: React.FC = () => {
         <button
           onClick={refreshBalance}
           disabled={isLoading}
-          className="flex-shrink-0 p-2 hover:bg-gray-100 rounded-lg transition disabled:opacity-50"
-          title="Refresh balance"
+          className="p-2 bg-slate-700/50 hover:bg-indigo-600/20 hover:text-indigo-400 text-slate-400 rounded-xl transition-all disabled:opacity-50"
         >
-          <svg className={`w-5 h-5 text-gray-600 ${isLoading ? 'animate-spin' : ''}`} fill="currentColor" viewBox="0 0 20 20">
-            <path fillRule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clipRule="evenodd" />
+          <svg className={`w-5 h-5 ${isLoading ? 'animate-spin' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
           </svg>
         </button>
       </div>
