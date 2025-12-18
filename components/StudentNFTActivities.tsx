@@ -1,11 +1,11 @@
 "use client";
 
 import { useState, useEffect } from "react";
-// Tambahkan EventLog ke import ethers
 import { Contract, EventLog } from "ethers";
 import { useWeb3 } from "@/contexts/Web3Context";
 import { ACTIVITY_MANAGER_ABI } from "@/contracts/ActivityManagerABI";
 import { CONTRACT_ADDRESSES } from "@/contracts/config";
+import { CardSkeleton } from "./skeletons/CardSkeleton"; // Import Skeleton
 
 interface NFTActivity {
   tokenId: string;
@@ -18,11 +18,14 @@ interface NFTActivity {
 export const StudentNFTActivities: React.FC = () => {
   const { provider, account } = useWeb3();
   const [nftActivities, setNftActivities] = useState<NFTActivity[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true); // Default loading true
 
   useEffect(() => {
     const fetchNFTActivities = async () => {
-      if (!provider || !account) return;
+      if (!provider || !account) {
+        setIsLoading(false);
+        return;
+      }
       setIsLoading(true);
       try {
         const contract = new Contract(CONTRACT_ADDRESSES.ACTIVITY_MANAGER, ACTIVITY_MANAGER_ABI, provider);
@@ -31,13 +34,10 @@ export const StudentNFTActivities: React.FC = () => {
 
         const activities: NFTActivity[] = [];
         for (const event of events) {
-          // FIX: Pastikan event adalah EventLog sebelum akses args
           if (event instanceof EventLog) {
             const activityId = event.args.activityId.toString();
             const tokenId = event.args.tokenId.toString();
             const uri = event.args.uri;
-            
-            // Ambil detail activity
             const activity = await contract.getActivity(activityId);
 
             activities.push({
@@ -77,15 +77,20 @@ export const StudentNFTActivities: React.FC = () => {
 
       <div className="p-6">
         {isLoading ? (
-          <div className="flex flex-col items-center justify-center py-8 text-slate-400">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-500 mb-2"></div>
-            <p className="text-xs">Syncing blockchain...</p>
+          // SKELETON LOADING STATE
+          <div className="overflow-x-auto pb-2 -mx-2 px-2 scrollbar-thin">
+            <div className="flex space-x-4 min-w-max">
+              {[1, 2, 3].map((i) => (
+                <CardSkeleton key={i} />
+              ))}
+            </div>
           </div>
         ) : nftActivities.length === 0 ? (
           <div className="text-center py-8 text-slate-500">
             <p>No certificates found.</p>
           </div>
         ) : (
+          // DATA REAL
           <div className="overflow-x-auto pb-2 -mx-2 px-2 scrollbar-thin">
             <div className="flex space-x-4 min-w-max">
               {nftActivities.map((nft, index) => (

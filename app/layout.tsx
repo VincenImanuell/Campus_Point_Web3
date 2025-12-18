@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { Toaster } from "react-hot-toast"; // Import Toast
 import "./globals.css";
 import { Web3Provider } from "@/contexts/Web3Context";
 
@@ -28,7 +29,32 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#020617] text-slate-50 min-h-screen`}
       >
-        <Web3Provider>{children}</Web3Provider>
+        <Web3Provider>
+          {children}
+          {/* Komponen Notifikasi Global */}
+          <Toaster 
+            position="bottom-right"
+            toastOptions={{
+              style: {
+                background: '#1e293b',
+                color: '#fff',
+                border: '1px solid #334155',
+              },
+              success: {
+                iconTheme: {
+                  primary: '#10b981',
+                  secondary: '#fff',
+                },
+              },
+              error: {
+                iconTheme: {
+                  primary: '#ef4444',
+                  secondary: '#fff',
+                },
+              },
+            }}
+          />
+        </Web3Provider>
       </body>
     </html>
   );
