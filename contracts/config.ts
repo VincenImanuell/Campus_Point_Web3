@@ -2,9 +2,9 @@
 // Replace these addresses with your deployed contract addresses on Sepolia testnet
 
 export const CONTRACT_ADDRESSES = {
-  CAMPUS_POINT: "0xFdb8E93a501F4891e248AD2E8E530146E050B8af", // Replace with deployed ERC20 address on Sepolia
-  ACTIVITY_CERTIFICATE: "0x2555cf531F0Aabb13fDAC4827f5F1A04CD517655", // Replace with deployed ERC721 address on Sepolia
-  ACTIVITY_MANAGER: "0x16Bf2c42113c8b6531D66Ed23344bB0934D6CbEB", // Replace with deployed ActivityManager address on Sepolia
+  CAMPUS_POINT: "0x7E2AA2AaCa73dAa7a7aF9e48561842FE8Be7E11c", // Replace with deployed ERC20 address on Sepolia
+  ACTIVITY_CERTIFICATE: "0xcc04B20f7eCB45687bFe951402736B9244bC72dC", // Replace with deployed ERC721 address on Sepolia
+  ACTIVITY_MANAGER: "0x113Ac66c4d8cA923C7a5BaF3523EA6B0D693EECB", // Replace with deployed ActivityManager address on Sepolia
 };
 
 // Sepolia Network Configuration
